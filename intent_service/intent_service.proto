@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package intent_classify.v1;
+
+service IntentService {
+    rpc IntentRecognizer (IntentRequest) returns (IntentResponse) {}
+}
+
+message IntentRequest {
+    string message = 1;
+}
+
+message IntentResponse {
+    string intent = 1;
+    float confidence = 2;
+    string reason = 3;
+}
