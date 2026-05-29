@@ -1,15 +1,51 @@
 services:
-  api:
-    build: ./backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: banking-backend
     ports:
       - "8000:8000"
-    env_file: .env
+    environment:
+      INTENT_SERVICE_HOST: intent-service
+      INTENT_SERVICE_PORT: 50051
+      OLLAMA_URL: ${OLLAMA_URL:-http://localhost:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gpt-oss:20b}
+    depends_on:
+      - intent-service
+    networks:
+      - public_net
+      - internal_net
+
+  intent-service:
+    build:
+      context: ./intent_service
+      dockerfile: Dockerfile
+    container_name: intent-service
+    ports:
+      - "50051:50051"
+    environment:
+      INTENT_API_URL: ${INTENT_API_URL:-http://localhost:8001}
+      GRPC_PORT: 50051
+    networks:
+      - internal_net
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: banking-frontend
     ports:
       - "8501:8501"
     environment:
-      API_URL: http://api:8000
+      API_URL: http://backend:8000
     depends_on:
-      - api
+      - backend
+    networks:
+      - public_net
+
+networks:
+  public_net:
+    name: banking_public_net
+  internal_net:
+    name: banking_internal_net
