@@ -1,7 +1,7 @@
-from app.clients.intent_client import IntentClient
+from app.clients.grpc_intent_client import GrpcIntentClient
 from app.core.schemas import IntentResult
 
 
 async def run(message: str) -> IntentResult:
-    client = IntentClient()
+    client = GrpcIntentClient()
     return await client.predict(message)

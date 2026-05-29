@@ -16,7 +16,8 @@ class CustomerRequest(BaseModel):
 class IntentResult(BaseModel):
     intent: str
     confidence: float
-    top_k: list[dict]
+    reason: str = ""
+    top_k: list[dict] = []
 
 
 class PriorityResult(BaseModel):
