@@ -77,9 +77,17 @@ with col_trace:
         confidence = intent.get("confidence", 0)
         st.progress(confidence, text=f"Confidence: {confidence:.0%}")
 
+        reason = intent.get("reason", "")
+        if reason:
+            st.caption(reason)
+
         with st.expander("Top-5 intents"):
-            for item in intent.get("top_k", []):
-                st.write(f"`{item['intent']}` — {item['score']:.0%}")
+            top_k = intent.get("top_k", [])
+            if top_k:
+                for item in top_k:
+                    st.write(f"`{item['intent']}` — {item['score']:.0%}")
+            else:
+                st.write("N/A (gRPC response)")
 
         st.divider()
 
